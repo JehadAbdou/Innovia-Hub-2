@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Backend.Hubs;
 using System.Diagnostics;
-
+using Backend.DbContext;
 namespace Backend.Controllers;
 
 [ApiController]

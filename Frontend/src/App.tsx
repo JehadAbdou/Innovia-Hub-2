@@ -6,10 +6,11 @@ import Booking from "./pages/Booking";
 import NotFound from "./pages/NotFound";
 import Profile from "./pages/Profile";
 import Resource from "./pages/Resource";
-import Layout from "./pages/Layout"; // "ram" med Header + Footer
+import Layout from "./pages/Layout";
 import Login from "./pages/Login";
 import ProtectedRoute from "./components/protectedRoute";
 import { useEffect, useState } from "react";
+import ChatBot from "./components/ChatBot";
 
 function App() {
   const [token, setToken] = useState<string | null>(null);
@@ -34,45 +35,48 @@ function App() {
   }
 
   return (
-    <Routes>
-      <Route element={<Layout />}>
-        <Route path="/" element={<LandingPage />} />
-        <Route
-          path="/admin"
-          element={
-            <ProtectedRoute requiredRole="admin">
-              {token ? <Admin token={token} /> : <div>Loading...</div>}
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/booking/:resourceId/:date/:slot"
-          element={
-            <ProtectedRoute>
-              <Booking />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/profile"
-          element={
-            <ProtectedRoute>
-              <Profile />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/resource/:resourceId"
-          element={
-            <ProtectedRoute>
-              <Resource />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="/login" element={<Login />} />
-        <Route path="*" element={<NotFound />} />
-      </Route>
-    </Routes>
+    <>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="/" element={<LandingPage />} />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute requiredRole="admin">
+                {token ? <Admin token={token} /> : <div>Loading...</div>}
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/booking/:resourceId/:date/:slot"
+            element={
+              <ProtectedRoute>
+                <Booking />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/resource/:resourceId"
+            element={
+              <ProtectedRoute>
+                <Resource />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/login" element={<Login />} />
+          <Route path="*" element={<NotFound />} />
+        </Route>
+      </Routes>
+      <ChatBot></ChatBot>
+    </>
   );
 }
 

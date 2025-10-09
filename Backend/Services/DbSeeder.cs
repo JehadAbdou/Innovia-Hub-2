@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Backend.Models;
 using Microsoft.AspNetCore.Identity;
-
+using Backend.DbContext;
 namespace Backend.Services;
 
 public static class DbSeeder

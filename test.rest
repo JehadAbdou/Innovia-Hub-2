@@ -43,7 +43,7 @@ POST http://localhost:5022/api/booking
 Content-Type: application/json
 
 {
-  "date": "2025-09-30",
+  "date": "2025-10-30",
   "timeSlot": "10-12",
   "resourceTypeId": 1,
   "userId": "{{id}}"
@@ -139,3 +139,14 @@ Content-Type: application/json
 ### Ta bort en användare
 DELETE http://localhost:5022/api/users/01d5c033-a326-4106-9db3-e6fb34972b18
 
+
+
+
+###
+POST http://{{host}}/api/chat
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImRkZWZmYTJmLWRhODYtNDQxYS05MzJiLWUyYTNhNTJlYTQ4OCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImFkbWluQGV4YW1wbGUuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiYWRtaW4iLCJleHAiOjE3NTk5NTQwNzgsImlzcyI6Imlubm92aWFodWIiLCJhdWQiOiJpbm5vdmlhaHViIn0.LBBRhMjUOVG9Ew0gLWYwDsFmqATawvuA5clAlikSRWg
+
+{
+  "Question": "kan du visa mig mina bokingar"
+}

@@ -1,6 +1,12 @@
 ﻿using Xunit;
 using Backend.Models;
 using Microsoft.AspNetCore.Identity;
+using Moq;
+using Backend.Interfaces.IRepositories;
+using Backend.Services;
+using Microsoft.AspNetCore.Mvc;
+using Backend.Models.Chat;
+using Backend.DTOs.Booking;
 
 namespace InnoviaHub.Tests;
 
@@ -96,5 +102,65 @@ public class UserTests
 
         // Assert
         Assert.False(canLogin, "User login should fail with invalid credentials.");
+    }
+    [Fact]
+    public async Task HandleCreateBookingAsync_WhenResourcesAvailable_ReturnsPendingBooking()
+    {
+        // Arrange
+        var repoMock = new Mock<IBookingRepository>();
+        var aiMock = new Mock<IAiService>();
+
+        var bookingArgs = new BookingArguments { Date = "2025-10-10", TimeSlot = "08:00-10:00", ResourceTypeId = 2 };
+        var history = new List<ChatMessage>();
+
+        aiMock.Setup(a => a.GetAiResponseAsync(It.IsAny<List<ChatMessage>>(),
+            It.IsAny<string>(),
+            It.IsAny<string>(),
+            It.IsAny<string>()))
+            .ReturnsAsync("Please confirm the booking?");
+
+        var sut = new BookingActionService(repoMock.Object, aiMock.Object);
+
+        // Act
+        var result = await sut.HandleCreateBookingAsync("user1", bookingArgs, history);
+
+        // Assert
+        var ok = Assert.IsType<OkObjectResult>(result);
+        dynamic value = ok.Value;
+        Assert.True((bool)value.awaitingConfirmation);
+        Assert.NotNull(value.pendingBooking);
+    }
+    
+        [Fact]
+    public async Task HandleCreateBookingAsync_WhenNoResources_ReturnsTakenMessage()
+    {
+        var repoMock = new Mock<IBookingRepository>();
+        var aiMock = new Mock<IAiService>();
+
+        var bookingArgs = new BookingArguments { Date = "2025-10-10", TimeSlot = "08:00-10:00", ResourceTypeId = 2 };
+        var history = new List<ChatMessage>();
+
+        
+        aiMock.Setup(a => a.GetAiResponseAsync(It.IsAny<List<ChatMessage>>(),
+            It.IsAny<string>(),
+            It.Is<string>(s => s.Contains("confirm a proposed booking")),
+            It.IsAny<string>()))
+            .ReturnsAsync("Please confirm");
+
+        
+        repoMock.Setup(r => r.AddBookingAsync(It.IsAny<DTOCreateBooking>()))
+            .ThrowsAsync(new InvalidOperationException("No available resources for the selected type, date, and timeslot."));
+
+        var sut = new BookingActionService(repoMock.Object, aiMock.Object);
+
+        
+        var initial = await sut.HandleCreateBookingAsync("user1", bookingArgs, history);
+        
+        var confirmResult = await sut.ConfirmActionAsync("user1", true, history);
+
+        var ok = Assert.IsType<OkObjectResult>(confirmResult);
+        dynamic value = ok.Value;
+        string msg = value.message;
+        Assert.Contains("time slot", msg.ToLower()); // or assert specific localized text if mocked
     }
 }

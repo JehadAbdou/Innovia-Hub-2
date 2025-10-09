@@ -2,7 +2,9 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Backend.Models;
-
+namespace Backend.DbContext
+{
+    
 public class AppDbContext : IdentityDbContext<User>
 {
     public AppDbContext(DbContextOptions<AppDbContext> options)
@@ -18,4 +20,5 @@ public class AppDbContext : IdentityDbContext<User>
         base.OnModelCreating(builder);
             
         }
+}
 }

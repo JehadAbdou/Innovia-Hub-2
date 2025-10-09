@@ -4,6 +4,17 @@ const api = axios.create({
   baseURL: API_BASE_URL,
 });
 
+// Helper: normalize timeslot formats to canonical "HH-HH" used by backend
+export const normalizeTimeSlot = (timeSlot: string) => {
+  if (!timeSlot) return timeSlot;
+  const parts = timeSlot.split("-");
+  if (parts.length !== 2) return timeSlot.trim();
+
+  const normalizePart = (p: string) =>
+    p.trim().replace(":00", "").replace(":", "");
+  return `${normalizePart(parts[0])}-${normalizePart(parts[1])}`;
+};
+
 //AUTH - Register
 export const registerUser = async (
   email: string,
@@ -88,6 +99,9 @@ export const createBooking = async (
   },
   token: string
 ) => {
+  // Normalize timeslot client-side to increase chance of matching backend format
+  booking.timeSlot = normalizeTimeSlot(booking.timeSlot);
+
   const res = await api.post("/booking", booking, {
     headers: { Authorization: `Bearer ${token} ` },
   });
@@ -124,14 +138,12 @@ export const getAllResources = async (token: string) => {
   });
   return res.data;
 };
-export const getResourceById = async (token: string,id:number) => {
+export const getResourceById = async (token: string, id: number) => {
   const res = await api.get(`/resource/${id}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   return res.data;
 };
-
-
 
 //USERS - Ge All Users
 export const getAllUsers = async (
@@ -189,4 +201,66 @@ export const deleteUserById = async (id: string, token: string) => {
   return res.data;
 };
 
+export const sendRequestToAI = async (question: string, token: string) => {
+  const res = await api.post(
+    `/chat`,
+    { question },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-type": "application/json",
+      },
+    }
+  );
+  return res.data;
+};
 
+export const confirmBooking = async (token: string) => {
+  const res = await api.post(
+    `/chat/confirmAction`,
+    { Confirm: true },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  return res.data;
+};
+
+export const cancelBooking = async (token: string) => {
+  // The backend exposes /chat/confirmAction to confirm or cancel (Confirm: true/false).
+  const res = await api.post(
+    `/chat/confirmAction`,
+    { Confirm: false },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  return res.data;
+};
+
+export const speak = async (text: string, token: string) => {
+  const res = await api.post(
+    "/chat/speak",
+    { text },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      responseType: "arraybuffer",
+    }
+  );
+
+  const blob = new Blob([res.data], { type: "audio/mpeg" });
+  const url = URL.createObjectURL(blob);
+  const audio = new Audio(url);
+  audio.play();
+
+  return audio; // optional
+};

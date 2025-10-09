@@ -1,10 +1,4 @@
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Data.Common;
-using System.Collections.Generic;
-
 using DotNetEnv;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using API;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -17,15 +11,26 @@ using Backend.Interfaces;
 using Backend.Services;
 using Backend.Models;
 using Backend.Hubs;
+using System.Net.Http.Headers;
+using Backend.DbContext;
+using Microsoft.EntityFrameworkCore;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
 Env.Load();
-
+builder.Services.AddHttpClient("openai", client =>
+{
+    client.BaseAddress = new Uri("https://api.openai.com/v1/");
+    var apiKey = Environment.GetEnvironmentVariable("API-KEY");
+    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
+    client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
+});
 builder.Services.AddOpenApi();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IAiService, AiService>();
+builder.Services.AddScoped<IBookingActionService, BookingActionService>();
 builder.Services.AddControllers();
 builder.Services.AddSignalR();
 
@@ -63,14 +68,14 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 });
 builder.Services.AddCors(options =>
     {
-        options.AddPolicy("AllowReactApp", policy =>
-        {
-            policy.SetIsOriginAllowed(_ => true)
-             .AllowAnyHeader()
-             .AllowAnyMethod()
-             .AllowCredentials(); 
-        
-        });
+       options.AddPolicy("AllowReactApp", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:5173") // your React app
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
     });
 
 builder.Services.AddScoped<JwtToken>();
@@ -135,5 +140,6 @@ app.UseAuthorization();
 app.UseStaticFiles();
 app.UseHttpsRedirection();
 app.MapHub<BookingHub>("/bookingHub");
+app.MapHub<TtsHub>("/ttshub");
 
 app.Run();

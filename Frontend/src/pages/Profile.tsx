@@ -9,23 +9,33 @@ import "../styles/Profile.css";
 
 import type { Booking } from "../Interfaces/types";
 
-
 const Profile = () => {
   const [userName, setUserName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [error, setError] = useState<string>("");
 
-  const parseTimeSlot = (date: string, timeSlot: string, useEndTime = false): number => {
-    const [startHour, endHour] = timeSlot.split("-").map(Number);
-    const bookingDate = new Date(date);
+  const parseTimeSlot = (
+    date: string,
+    timeSlot: string,
+    useEndTime = false
+  ): number => {
+    const [startStr, endStr] = timeSlot.split("-");
+    const timeStr = useEndTime ? endStr : startStr;
 
-    if (isNaN(bookingDate.getTime())) {
-      return 0;
+    let hour = 0;
+    let minute = 0;
+
+    if (timeStr.includes(":")) {
+      [hour, minute] = timeStr.split(":").map(Number);
+    } else {
+      hour = Number(timeStr);
     }
 
-    const hourToUse = useEndTime ? endHour : startHour;
-    bookingDate.setHours(hourToUse, 0, 0, 0); 
+    const bookingDate = new Date(date);
+    if (isNaN(bookingDate.getTime())) return 0;
+
+    bookingDate.setHours(hour, minute, 0, 0);
     return bookingDate.getTime();
   };
 
@@ -38,33 +48,48 @@ const Profile = () => {
     const fetchBookings = async () => {
       const userId = localStorage.getItem("userId");
       const token = localStorage.getItem("token");
-    
+
       if (userId && token) {
         try {
           const userBookings = await getUserBookings(userId, token);
-    
+
           const now = new Date().getTime();
-    
+
           userBookings.forEach((booking: Booking) => {
-            const bookingStartTime = parseTimeSlot(booking.date, booking.timeSlot);
-            const bookingEndTime = parseTimeSlot(booking.date, booking.timeSlot, true);
+            const bookingStartTime = parseTimeSlot(
+              booking.date,
+              booking.timeSlot
+            );
+            const bookingEndTime = parseTimeSlot(
+              booking.date,
+              booking.timeSlot,
+              true
+            );
             console.log(
               `Bokning: ${booking.date} ${booking.timeSlot}, Start: ${bookingStartTime}, Slut: ${bookingEndTime}`
             );
           });
-    
+
           // filtrerar kommande bokningar
           const upcomingBookings = userBookings.filter((booking: Booking) => {
-            const bookingEndTime = parseTimeSlot(booking.date, booking.timeSlot, true); // Använd sluttiden
+            const bookingEndTime = parseTimeSlot(
+              booking.date,
+              booking.timeSlot,
+              true
+            ); // Använd sluttiden
             return bookingEndTime >= now;
           });
-    
+
           // filtrerar tidigare bokningar
           const pastBookings = userBookings.filter((booking: Booking) => {
-            const bookingEndTime = parseTimeSlot(booking.date, booking.timeSlot, true); // Använd sluttiden
-            return bookingEndTime < now; 
+            const bookingEndTime = parseTimeSlot(
+              booking.date,
+              booking.timeSlot,
+              true
+            ); // Använd sluttiden
+            return bookingEndTime < now;
           });
-    
+
           // sorterar kommande bokningar och lägger tidigast först
           const sortedUpcomingBookings = upcomingBookings.sort(
             (a: Booking, b: Booking) => {
@@ -73,7 +98,7 @@ const Profile = () => {
               return timeA - timeB;
             }
           );
-    
+
           // sorterar tidigare bokningar
           const sortedPastBookings = pastBookings.sort(
             (a: Booking, b: Booking) => {
@@ -82,7 +107,7 @@ const Profile = () => {
               return timeB - timeA;
             }
           );
-    
+
           // uppdaterar state med filtrerade bokningar
           setBookings([...sortedUpcomingBookings, ...sortedPastBookings]);
         } catch (err: any) {
@@ -178,11 +203,19 @@ const Profile = () => {
               <ul>
                 {bookings
                   .filter((booking) => {
-                    const bookingEndTime = parseTimeSlot(booking.date, booking.timeSlot, true); 
-                    return bookingEndTime >= new Date().getTime(); 
+                    const bookingEndTime = parseTimeSlot(
+                      booking.date,
+                      booking.timeSlot,
+                      true
+                    );
+                    return bookingEndTime >= new Date().getTime();
                   })
                   .map((booking) => (
-                    <li key={booking.bookingId || `${booking.date}-${booking.timeSlot}`}>
+                    <li
+                      key={
+                        booking.bookingId ||
+                        `${booking.date}-${booking.timeSlot}`
+                      }>
                       <img
                         src={resourceImages(booking.resourceName)}
                         alt={booking.resourceName}
@@ -194,8 +227,7 @@ const Profile = () => {
                       </div>
                       <button
                         className="cancelButton"
-                        onClick={() => handleCancelBooking(booking.bookingId)}
-                      >
+                        onClick={() => handleCancelBooking(booking.bookingId)}>
                         AVBOKA
                       </button>
                     </li>
@@ -206,14 +238,20 @@ const Profile = () => {
               <ul>
                 {bookings
                   .filter((booking) => {
-                    const bookingEndTime = parseTimeSlot(booking.date, booking.timeSlot, true); 
-                    return bookingEndTime < new Date().getTime(); 
+                    const bookingEndTime = parseTimeSlot(
+                      booking.date,
+                      booking.timeSlot,
+                      true
+                    );
+                    return bookingEndTime < new Date().getTime();
                   })
                   .map((booking) => (
                     <li
-                      key={booking.bookingId || `${booking.date}-${booking.timeSlot}`}
-                      className="pastBooking"
-                    >
+                      key={
+                        booking.bookingId ||
+                        `${booking.date}-${booking.timeSlot}`
+                      }
+                      className="pastBooking">
                       <img
                         src={resourceImages(booking.resourceName)}
                         alt={booking.resourceName}
