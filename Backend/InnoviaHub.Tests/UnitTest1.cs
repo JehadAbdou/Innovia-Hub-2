@@ -131,7 +131,7 @@ public class UserTests
         Assert.NotNull(value.pendingBooking);
     }
     
-        [Fact]
+    [Fact]
     public async Task HandleCreateBookingAsync_WhenNoResources_ReturnsTakenMessage()
     {
         var repoMock = new Mock<IBookingRepository>();
@@ -161,6 +161,6 @@ public class UserTests
         var ok = Assert.IsType<OkObjectResult>(confirmResult);
         dynamic value = ok.Value;
         string msg = value.message;
-        Assert.Contains("time slot", msg.ToLower()); // or assert specific localized text if mocked
+        Assert.Contains("time slot", msg.ToLower());
     }
 }
