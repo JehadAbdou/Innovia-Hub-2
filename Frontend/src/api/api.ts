@@ -262,5 +262,116 @@ export const speak = async (text: string, token: string) => {
   const audio = new Audio(url);
   audio.play();
 
-  return audio; // optional
+  return audio; 
+};
+
+// DEVICES - Get all devices
+
+export const getDevices  = async ()=>{
+  const res = await api.get("/sensors/devices",
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  return res.data;
+}
+
+// RULES - Create rule
+export const createDeviceRule = async (
+  token: string,
+  tenantId: string,
+  deviceId: string,
+  type: string,
+  op: string,
+  threshold: number,
+  cooldownSeconds: number,
+  enabled: boolean
+) => {
+  const res = await api.post(
+    '/sensors/rules',
+    {
+      tenantId,
+      deviceId,
+      type,
+      op,
+      threshold,
+      cooldownSeconds,
+      enabled
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  return res.data;
+};
+
+// RULES - Get all rules
+export const getAllRules = async (token: string) => {
+  const res = await api.get('/sensors/rules', {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+  return res.data;
+};
+
+// RULES - Update rule
+export const updateDeviceRule = async (
+  ruleId: string,
+  token: string,
+  tenantId: string,
+  deviceId: string,
+  type: string,
+  op: string,
+  threshold: number,
+  cooldownSeconds: number,
+  enabled: boolean
+) => {
+  const res = await api.put(
+    `/sensors/rules/${ruleId}`,
+    {
+      tenantId,
+      deviceId,
+      type,
+      op,
+      threshold,
+      cooldownSeconds,
+      enabled
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  return res.data;
+};
+
+// RULES - Delete rule
+export const deleteDeviceRule = async (ruleId: string, token: string) => {
+  const res = await api.delete(`/sensors/rules/${ruleId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+  return res.data;
+}
+
+// ALERTS - Get all alerts
+export const getAllAlerts = async (token: string) => {
+  const res = await api.get('/sensors/alerts', {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+  return res.data;
 };

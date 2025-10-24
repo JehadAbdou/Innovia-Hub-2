@@ -1,0 +1,21 @@
+.container {
+  padding: 20px;
+}
+
+.header {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  font-size: 18px;
+  color: #666;
+}
+
+.noData {
+  text-align: center;
+  padding: 40px;
+  color: #999;
+}

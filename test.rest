@@ -150,3 +150,56 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hc
 {
   "Question": "kan du visa mig mina bokingar"
 }
+
+
+###
+GET http://{{host}}/api/sensors/devices
+Content-Type: application/json
+
+
+###
+POST http://{{host}}/api/sensors/rules
+Content-Type: application/json
+
+{  
+       "tenantId": "dab37251-fa80-4a67-b7dd-6d65419b709f",
+       "deviceId": "aa450512-af20-4722-ab8f-263a8f6d3578",
+       "type": "temperature",
+       "op": ">",
+       "threshold": 19.0,
+       "cooldownSeconds": 300,
+       "enabled": true
+     }
+
+
+###
+GET http://{{host}}/api/sensors/rules
+Content-Type: application/json
+
+
+
+###
+PUT http://{{host}}/api/sensors/rules/0874a90b-7021-48d5-b3ca-434a9e25f40a
+Content-Type: application/json
+
+{  
+       "tenantId": "dab37251-fa80-4a67-b7dd-6d65419b709f",
+       "deviceId": "aa450512-af20-4722-ab8f-263a8f6d3578",
+       "type": "temperature",
+       "op": ">",
+       "threshold": 21.0,
+       "cooldownSeconds": 300,
+       "enabled": true
+     }
+
+
+
+
+###
+GET http://{{host}}/api/sensors/alerts
+Content-Type: application/json
+
+
+###
+DELETE http://{{host}}/api/sensors/rules/0874a90b-7021-48d5-b3ca-434a9e25f40a
+Content-Type: application/json

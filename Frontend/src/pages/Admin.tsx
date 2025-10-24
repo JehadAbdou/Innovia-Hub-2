@@ -6,6 +6,7 @@ import ResourcesTab from "../components/ResourcesTab";
 import { connection } from "../signalRConnection";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import SensorsTab from "../components/SensorsTab";
 
 interface AdminProps {
   token: string;
@@ -103,12 +104,21 @@ const Admin: React.FC<AdminProps> = ({ token }) => {
           }}>
           RESURSER
         </button>
+         <button
+          className={`tab ${activeTab === "sensors" ? "active" : ""}`}
+          onClick={() => {
+            setActiveTab("sensors");
+            localStorage.setItem("activePage", "sensors");
+          }}>
+          SENSORS
+        </button>
       </nav>
 
       <div className="content">
         {activeTab === "bookings" && <BookingsTab token={token} />}
         {activeTab === "users" && <UsersTab token={token} />}
         {activeTab === "resources" && <ResourcesTab token={token} />}
+        {activeTab === "sensors" && <SensorsTab token={token} />}
       </div>
     </div>
   );

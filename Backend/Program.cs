@@ -26,6 +26,16 @@ builder.Services.AddHttpClient("openai", client =>
     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
     client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
 });
+builder.Services.AddHttpClient("iot", client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5101/");
+    client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
+});
+builder.Services.AddHttpClient("rules", client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5105/");
+    client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
+});
 builder.Services.AddOpenApi();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -71,7 +81,7 @@ builder.Services.AddCors(options =>
        options.AddPolicy("AllowReactApp", policy =>
     {
         policy
-            .WithOrigins("http://localhost:5173") // your React app
+            .WithOrigins("http://localhost:5173") 
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
