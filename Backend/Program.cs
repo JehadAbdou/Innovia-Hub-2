@@ -6,7 +6,8 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Backend.Interfaces.IRepositories;
 using Backend.Repositories;
-
+using Microsoft.Extensions.FileProviders;
+using System.IO;
 using Backend.Interfaces;
 using Backend.Services;
 using Backend.Models;
@@ -141,6 +142,19 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "dist")),
+    RequestPath = ""
+});
+
+// Make React handle client-side routing
+app.MapFallbackToFile("index.html", new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "dist"))
+});
 
 app.UseCors("AllowReactApp");
 app.UseRouting();
