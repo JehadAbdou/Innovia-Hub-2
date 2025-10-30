@@ -21,14 +21,14 @@ export const registerUser = async (
   password: string,
   name: string
 ) => {
-  const res = await api.post("/auth/register", { email, password, name });
+  const res = await api.post("api/auth/register", { email, password, name });
   console.log(res.data);
   return res.data;
 };
 
 //AUTH - Log in
 export const loginUser = async (email: string, password: string) => {
-  const res = await api.post("/auth/login", { email, password });
+  const res = await api.post("api/auth/login", { email, password });
   console.log("API Response:", res.data);
   localStorage.setItem("userName", res.data.userName);
   localStorage.setItem("userId", res.data.id);
@@ -37,7 +37,7 @@ export const loginUser = async (email: string, password: string) => {
 
 //BOOKING - Get all bookings
 export const getAllBookings = async (token: string) => {
-  const res = await api.get("/booking", {
+  const res = await api.get("api/booking", {
     headers: { Authorization: `Bearer ${token}` },
   });
   return res.data;
@@ -45,7 +45,7 @@ export const getAllBookings = async (token: string) => {
 // Booking Get filtered Bookings
 export const getFilteredBookings = async (token: string, date: Date | null) => {
   const dateStr = date!.toISOString().slice(0, 10);
-  const res = await api.get(`/booking/date?date=${dateStr}`, {
+  const res = await api.get(`api/booking/date?date=${dateStr}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 
