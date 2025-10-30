@@ -1,0 +1,53 @@
+version: '3.9'
+
+services:
+  db:
+    image: mysql:8
+    container_name: innovia-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 2714444j
+      MYSQL_DATABASE: innoviahub
+    volumes:
+      - innovia_data:/var/lib/mysql
+    networks:
+      - innovia-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p2714444j"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 40s
+
+  backend:
+    image: innovia-hub
+    container_name: innovia-hub-backend
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:8080
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_USER=root
+      - DB_PASSWORD=2714444j
+      - DB_NAME=innoviahub
+      - JWT_KEY=J7X2Z9U2dXk63FqG9HvYQs8wNX9P5uQjmBo0YHkZ4EdZ9LV0VvB8cM9cTpT24Dr4V0VvB8cM9cTpT24Dr4
+      - JWT_ISSUER=innoviahub
+      - JWT_AUDIENCE=innoviahub
+      - ALLOWED_ORIGINS=http://localhost:8080,http://localhost:5173
+      - IOT_SERVICE_URL=http://localhost:5101/
+      - RULES_SERVICE_URL=http://localhost:5105/
+    ports:
+      - "8080:8080"
+    networks:
+      - innovia-network
+
+networks:
+  innovia-network:
+    driver: bridge
+
+volumes:
+  innovia_data:

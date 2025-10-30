@@ -1,10 +1,10 @@
 import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr';
-
+const API_BASE_URL = import.meta.env.VITE_SIGNALR_URL;
 const token = localStorage.getItem("token") ?? "";
 
 // Booking Hub
 export const connection = new HubConnectionBuilder()
-  .withUrl("http://localhost:5022/bookingHub", {
+  .withUrl(`${API_BASE_URL}/bookingHub`, {
     accessTokenFactory: () => token,
   })
   .withAutomaticReconnect()
@@ -12,7 +12,7 @@ export const connection = new HubConnectionBuilder()
 
 // TTS Hub
 export const ttsConnection = new HubConnectionBuilder()
-  .withUrl("http://localhost:5022/ttshub", {
+  .withUrl(`${API_BASE_URL}/ttshub`, {
     accessTokenFactory: () => token,
   })
   .withAutomaticReconnect()
@@ -20,7 +20,7 @@ export const ttsConnection = new HubConnectionBuilder()
 
 // IoT Hub
 export const IOTconnection = new HubConnectionBuilder()
-  .withUrl("http://localhost:5103/hub/telemetry")
+  .withUrl(`http://localhost:5103/hub/telemetry`)
   .withAutomaticReconnect()
   .build();
 

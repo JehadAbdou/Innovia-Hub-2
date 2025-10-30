@@ -29,6 +29,10 @@ build/
 
 BuildArtifacts/
 
+Frontend/dist/
+Backend/dist/
+.env
+*.env.local
 
 
 
