@@ -1,0 +1,53 @@
+services:
+  # MySQL Database
+  - type: pserv
+    name: innovia-db
+    env: docker
+    dockerfilePath: ./Dockerfile.mysql
+    envVars:
+      - key: MYSQL_ROOT_PASSWORD
+        generateValue: true
+      - key: MYSQL_DATABASE
+        value: innoviahub
+    disk:
+      name: innovia-mysql-data
+      mountPath: /var/lib/mysql
+      sizeGB: 10
+
+  # Backend + Frontend
+  - type: web
+    name: innovia-hub
+    env: docker
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ASPNETCORE_URLS
+        value: http://+:8080
+      - key: DB_HOST
+        fromService:
+          type: pserv
+          name: innovia-db
+          property: host
+      - key: DB_PORT
+        value: 3306
+      - key: DB_USER
+        value: root
+      - key: DB_PASSWORD
+        fromService:
+          type: pserv
+          name: innovia-db
+          envVarKey: MYSQL_ROOT_PASSWORD
+      - key: DB_NAME
+        value: innoviahub
+      - key: JWT_KEY
+        generateValue: true
+      - key: JWT_ISSUER
+        value: innoviahub
+      - key: JWT_AUDIENCE
+        value: innoviahub
+      - key: ALLOWED_ORIGINS
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+    healthCheckPath: /api/resource

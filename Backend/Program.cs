@@ -200,18 +200,6 @@ using (var scope = app.Services.CreateScope())
         }
     }
 
-    // Apply migrations
-    try
-    {
-        Console.WriteLine("🔄 Applying migrations...");
-        await db.Database.MigrateAsync();
-        Console.WriteLine("✅ Migrations applied successfully!");
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"❌ Migration failed: {ex.Message}");
-        throw;
-    }
 
     // Seed data
     try
