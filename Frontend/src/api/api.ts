@@ -53,7 +53,7 @@ export const getFilteredBookings = async (token: string, date: Date | null) => {
 };
 //BOOKING - Get a users booking
 export const getUserBookings = async (userId: string, token: string) => {
-  const res = await api.get(`/booking/user/${userId}`, {
+  const res = await api.get(`api/booking/user/${userId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -81,7 +81,7 @@ export const getFreeSlots = async (
   console.log("🚀 Sending payload to backend:", payload);
 
   const res = await api.post<string[]>(
-    `/booking/${resourceTypeId}/freeSlots`, // match backend casing
+    `api/booking/${resourceTypeId}/freeSlots`, // match backend casing
     payload,
     { headers: { Authorization: `Bearer ${token}` } }
   );
@@ -102,7 +102,7 @@ export const createBooking = async (
   // Normalize timeslot client-side to increase chance of matching backend format
   booking.timeSlot = normalizeTimeSlot(booking.timeSlot);
 
-  const res = await api.post("/booking", booking, {
+  const res = await api.post("api/booking", booking, {
     headers: { Authorization: `Bearer ${token} ` },
   });
   return res.data;
@@ -110,7 +110,7 @@ export const createBooking = async (
 
 //BOOKING - Remove a booking
 export const deleteBooking = async (bookingId: number, token: string) => {
-  const res = await api.delete(`/booking/${bookingId}`, {
+  const res = await api.delete(`api/booking/${bookingId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -124,7 +124,7 @@ export const changeResourceStatus = async (
   token: string
 ) => {
   const res = await api.patch(
-    `/booking/resource/${resourceId}`,
+    `api/booking/resource/${resourceId}`,
     {},
     {
       headers: { Authorization: `Bearer ${token}` },
@@ -133,7 +133,7 @@ export const changeResourceStatus = async (
   return res.data;
 };
 export const getAllResources = async (token: string) => {
-  const res = await api.get("/resource", {
+  const res = await api.get("api/resource", {
     headers: { Authorization: `Bearer ${token}` },
   });
   return res.data;
@@ -150,7 +150,7 @@ export const getAllUsers = async (
   token: string,
   filter?: { name?: string; email?: string }
 ) => {
-  const res = await api.get("/users", {
+  const res = await api.get("api/users", {
     headers: {
       Authorization: `Bearer ${token}`,
       Accept: "application/json",
@@ -162,7 +162,7 @@ export const getAllUsers = async (
 
 //USERS - Get specific user
 export const getUserById = async (id: string, token: string) => {
-  const res = await api.get(`/users/${id}`, {
+  const res = await api.get(`api/users/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
       Accept: "application/json",
@@ -179,7 +179,7 @@ export const updateUserById = async (
   email: string
 ) => {
   const res = await api.post(
-    `/users/${id}`,
+    `api/users/${id}`,
     { email, name },
     {
       headers: {
@@ -192,7 +192,7 @@ export const updateUserById = async (
 };
 
 export const deleteUserById = async (id: string, token: string) => {
-  const res = await api.delete(`/users/${id}`, {
+  const res = await api.delete(`api/users/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
@@ -203,7 +203,7 @@ export const deleteUserById = async (id: string, token: string) => {
 
 export const sendRequestToAI = async (question: string, token: string) => {
   const res = await api.post(
-    `/chat`,
+    `api/chat`,
     { question },
     {
       headers: {
@@ -217,7 +217,7 @@ export const sendRequestToAI = async (question: string, token: string) => {
 
 export const confirmBooking = async (token: string) => {
   const res = await api.post(
-    `/chat/confirmAction`,
+    `api/chat/confirmAction`,
     { Confirm: true },
     {
       headers: {
@@ -232,7 +232,7 @@ export const confirmBooking = async (token: string) => {
 export const cancelBooking = async (token: string) => {
   // The backend exposes /chat/confirmAction to confirm or cancel (Confirm: true/false).
   const res = await api.post(
-    `/chat/confirmAction`,
+    `api/chat/confirmAction`,
     { Confirm: false },
     {
       headers: {
@@ -246,7 +246,7 @@ export const cancelBooking = async (token: string) => {
 
 export const speak = async (text: string, token: string) => {
   const res = await api.post(
-    "/chat/speak",
+    "api/chat/speak",
     { text },
     {
       headers: {
@@ -268,7 +268,7 @@ export const speak = async (text: string, token: string) => {
 // DEVICES - Get all devices
 
 export const getDevices  = async ()=>{
-  const res = await api.get("/sensors/devices",
+  const res = await api.get("api/sensors/devices",
     {
       headers: {
         "Content-Type": "application/json",
@@ -290,7 +290,7 @@ export const createDeviceRule = async (
   enabled: boolean
 ) => {
   const res = await api.post(
-    '/sensors/rules',
+    'api/sensors/rules',
     {
       tenantId,
       deviceId,
@@ -312,7 +312,7 @@ export const createDeviceRule = async (
 
 // RULES - Get all rules
 export const getAllRules = async (token: string) => {
-  const res = await api.get('/sensors/rules', {
+  const res = await api.get('api/sensors/rules', {
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
@@ -334,7 +334,7 @@ export const updateDeviceRule = async (
   enabled: boolean
 ) => {
   const res = await api.put(
-    `/sensors/rules/${ruleId}`,
+    `api/sensors/rules/${ruleId}`,
     {
       tenantId,
       deviceId,
@@ -356,7 +356,7 @@ export const updateDeviceRule = async (
 
 // RULES - Delete rule
 export const deleteDeviceRule = async (ruleId: string, token: string) => {
-  const res = await api.delete(`/sensors/rules/${ruleId}`, {
+  const res = await api.delete(`api/sensors/rules/${ruleId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
@@ -367,7 +367,7 @@ export const deleteDeviceRule = async (ruleId: string, token: string) => {
 
 // ALERTS - Get all alerts
 export const getAllAlerts = async (token: string) => {
-  const res = await api.get('/sensors/alerts', {
+  const res = await api.get('api/sensors/alerts', {
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
