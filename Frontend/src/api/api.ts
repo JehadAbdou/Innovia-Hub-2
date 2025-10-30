@@ -60,6 +60,13 @@ export const getUserBookings = async (userId: string, token: string) => {
   });
   return res.data;
 };
+const formatDateLocal = (date: string | Date) => {
+  const d = date instanceof Date ? date : new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0"); // months are 0-based
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
 
 //TIMESlOTS
 export const getFreeSlots = async (
@@ -67,21 +74,12 @@ export const getFreeSlots = async (
   resourceTypeId: number,
   token: string
 ) => {
-  let formattedDate: string;
-
-  if (date instanceof Date) {
-    // always "YYYY-MM-DD"
-    formattedDate = date.toISOString().split("T")[0];
-  } else {
-    // if already a string, convert to Date first
-    formattedDate = new Date(date).toISOString().split("T")[0];
-  }
-
+  const formattedDate = formatDateLocal(date);
   const payload = { date: formattedDate };
   console.log("🚀 Sending payload to backend:", payload);
 
   const res = await api.post<string[]>(
-    `api/booking/${resourceTypeId}/freeSlots`, // match backend casing
+    `api/booking/${resourceTypeId}/freeSlots`,
     payload,
     { headers: { Authorization: `Bearer ${token}` } }
   );
