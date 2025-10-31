@@ -14,6 +14,7 @@ För användaren
 För administratören
 - Administratörer har en egen panel där de kan hantera användare, resurser och bokningar.
 - De kan aktivera/inaktivera resurser, ta bort bokningar eller uppdatera information om medlemmar.
+- admin kan också se sensorer och ändra konfiguration av sensorana.
 - All data hanteras via ett API som backend tillhandahåller.
 
 Tekniska funktioner
@@ -99,5 +100,5 @@ Frontend startar på `http://localhost:5173`
   - Säkerställ att `VITE_API_URL` pekar på rätt adress (`http://localhost:5022/api`).
 
 - Databasanslutning misslyckas:
-  - Verifiera att MySQL kör på port `3307` eller uppdatera `appsettings.json` till din port.
+  - Verifiera att MySQL kör på port `3306` eller uppdatera `appsettings.json` till din port.
   - Kontrollera användare/lösenord och att databasen finns/kan skapas.

@@ -6,14 +6,14 @@ services:
     container_name: innovia-db
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: 2714444j
+      MYSQL_ROOT_PASSWORD: change-me-root
       MYSQL_DATABASE: innoviahub
     volumes:
       - innovia_data:/var/lib/mysql
     networks:
       - innovia-network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p2714444j"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "admin", "change-me-root"]
       interval: 10s
       timeout: 5s
       retries: 30
@@ -31,9 +31,9 @@ services:
       - ASPNETCORE_URLS=http://+:8080
       - DB_HOST=db
       - DB_PORT=3306
-      - DB_USER=root
-      - DB_PASSWORD=2714444j
-      - DB_NAME=innoviahub
+      - DB_USER=admin
+      - DB_PASSWORD=change-me-root
+      - DB_NAME=innoviaAdmin
       - JWT_KEY=J7X2Z9U2dXk63FqG9HvYQs8wNX9P5uQjmBo0YHkZ4EdZ9LV0VvB8cM9cTpT24Dr4V0VvB8cM9cTpT24Dr4
       - JWT_ISSUER=innoviahub
       - JWT_AUDIENCE=innoviahub

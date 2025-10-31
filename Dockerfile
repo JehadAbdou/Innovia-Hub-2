@@ -7,11 +7,6 @@ COPY Frontend/package*.json ./
 RUN npm install
 COPY Frontend/ ./
 
-# ✅ Pass correct environment variables when building
-ARG VITE_API_URL
-ARG VITE_SIGNALR_URL
-ENV VITE_API_URL=${VITE_API_URL}
-ENV VITE_SIGNALR_URL=${VITE_SIGNALR_URL}
 
 RUN npm run build
 
