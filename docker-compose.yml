@@ -1,0 +1,48 @@
+﻿version: "3.8"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_NAME=innoviahub_local
+      - DB_USER=root
+      - DB_PASSWORD=271444j
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - innoviahub-network
+
+  db:
+    image: mysql:8.0
+    container_name: innovia-db
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 271444j
+      MYSQL_DATABASE: innoviahub_local
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - innoviahub-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  innoviahub-network:
+    driver: bridge
+
+volumes:
+  mysql-data:

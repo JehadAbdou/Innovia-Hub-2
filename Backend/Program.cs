@@ -237,21 +237,8 @@ if (app.Environment.IsDevelopment())
 // Serve static files from wwwroot (default ASP.NET location)
 app.UseStaticFiles();
 
-// Serve static files from dist folder (React build)
-var distPath = Path.Combine(Directory.GetCurrentDirectory(), "dist");
-if (Directory.Exists(distPath))
-{
-    Console.WriteLine($"✅ Found dist folder at: {distPath}");
-    app.UseStaticFiles(new StaticFileOptions
-    {
-        FileProvider = new PhysicalFileProvider(distPath),
-        RequestPath = ""
-    });
-}
-else
-{
-    Console.WriteLine($"⚠️  No dist folder found at: {distPath}");
-}
+app.UseDefaultFiles();
+app.UseStaticFiles();
 
 app.UseCors("AllowReactApp");
 app.UseRouting();
@@ -265,14 +252,8 @@ app.MapHub<TtsHub>("/ttshub");
 
 // Fallback to React app for client-side routing (SPA)
 // This must be LAST - it catches all routes that aren't API endpoints
-if (Directory.Exists(distPath))
-{
-    app.MapFallbackToFile("index.html", new StaticFileOptions
-    {
-        FileProvider = new PhysicalFileProvider(distPath)
-    });
-    Console.WriteLine("✅ React SPA fallback configured");
-}
+app.MapFallbackToFile("index.html");
+Console.WriteLine("✅ React SPA fallback configured");
 
 Console.WriteLine($"🚀 InnoviaHub API started");
 Console.WriteLine($"📝 Environment: {app.Environment.EnvironmentName}");

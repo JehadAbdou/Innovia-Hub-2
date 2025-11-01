@@ -34,12 +34,33 @@ Tekniska funktioner
 
 ---
 
-## Kom igång – Installation (Backend + Frontend)
+## Kom igång – Installation
+
+### Alternativ 1: Med Docker (rekommenderas)
+
+Krav:
+- Docker Desktop
+- Docker Compose
+
+```bash
+# Starta alla tjänster (backend, frontend, databas)
+docker-compose up -d
+
+# Se loggar
+docker-compose logs -f
+```
+
+Tjänsterna kommer vara tillgängliga på:
+- Frontend: http://localhost:5173
+- Backend API: http://localhost:8080
+- MySQL: localhost:3306
+
+### Alternativ 2: Lokal installation
 
 Krav på verktyg/versioner
 - **.NET SDK:** 9.0
 - **Node.js:** 18 eller 20 rekommenderas
-- **MySQL:** igång lokalt på `localhost:3307` (går att ändra i `Backend/appsettings.json`)
+- **MySQL:** igång lokalt på port 3306
 
 Nedan följer en steg-för-steg guide för att köra projektet lokalt.
 
