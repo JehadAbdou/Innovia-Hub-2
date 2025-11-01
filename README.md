@@ -91,6 +91,41 @@ Frontend startar på `http://localhost:5173`
 - Starta MySQL lokalt och säkerställ att konfigurationen matchar `appsettings.json` (se ovan).
 - Databasen och seed-data skapas automatiskt första gången du kör backend.
 
+### Lokala DB-uppgifter (ditt system)
+
+- Enligt dina uppgifter använder du en lokal MySQL-instans med följande utvecklingsinställningar:
+  - Host: `localhost` (127.0.0.1)
+  - Port: `3306`
+  - Database: `innoviaIOT`
+  - User: `root`
+  - Password: `271444j`
+
+- För att köra backend lokalt (utan Docker) är `Backend/appsettings.json` nu inställd med ovanstående standardanslutning så `dotnet run` försöker koppla mot din lokala DB.
+
+### Skillnad mellan lokal MySQL och Docker-compose MySQL
+
+- Docker Compose skapar en separat MySQL-container som i denna repo är mappad till värdens port `3307` för att undvika konflikt med en redan körande lokal MySQL på `3306`.
+- Compose-DB (exempelinställningar):
+  - Host (container): `db` (nätverksnamn i compose)
+  - Port (container): `3306`
+  - Mappad till host: `127.0.0.1:3307` (hostport)
+  - App user: `innovia` / `innovia_pass`
+  - Database: `innoviahub`
+
+- Om du vill att container-backend ska använda din lokala DB istället för compose-DB, överstyr backendens env-variabler i `docker-compose.yml` eller använd `host.docker.internal` som `DB_HOST`:
+
+```yaml
+  backend:
+    environment:
+      - DB_HOST=host.docker.internal
+      - DB_PORT=3306
+      - DB_USER=root
+      - DB_PASSWORD=271444j
+      - DB_NAME=innoviaIOT
+```
+
+Notera: `host.docker.internal` fungerar i Docker Desktop på Windows/Mac. På Linux behöver du ange värdens IP eller konfigurera nätverket annorlunda.
+
 ---
 
 ## Felsökning

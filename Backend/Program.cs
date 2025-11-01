@@ -18,7 +18,7 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Load .env file (only if it exists, won't break in Docker)
+
 if (File.Exists(".env"))
 {
     Env.Load();
@@ -27,7 +27,7 @@ if (File.Exists(".env"))
 builder.Services.AddHttpClient("openai", client =>
 {
     client.BaseAddress = new Uri("https://api.openai.com/v1/");
-    var apiKey = Environment.GetEnvironmentVariable("API-KEY");
+    var apiKey = Environment.GetEnvironmentVariable("API_KEY");
     if (!string.IsNullOrEmpty(apiKey))
     {
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
@@ -184,6 +184,19 @@ using (var scope = app.Services.CreateScope())
             if (canConnect)
             {
                 Console.WriteLine("✅ Database connection successful!");
+                // Apply any pending EF Core migrations before seeding
+                try
+                {
+                    Console.WriteLine("🔧 Applying pending EF Core migrations (if any)...");
+                    await db.Database.MigrateAsync();
+                    Console.WriteLine("✅ EF Core migrations applied");
+                }
+                catch (Exception migEx)
+                {
+                    Console.WriteLine($"⚠️ Failed to apply migrations: {migEx.Message}");
+                    // Continue - seeding may still fail, but we want to surface the migration error
+                }
+
                 break;
             }
         }
