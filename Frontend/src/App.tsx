@@ -43,7 +43,7 @@ function App() {
             path="/admin"
             element={
               <ProtectedRoute requiredRole="admin">
-                {token ? <Admin token={token} /> : <div>Loading...</div>}
+                <Admin token={token || localStorage.getItem("token") || ""} />
               </ProtectedRoute>
             }
           />

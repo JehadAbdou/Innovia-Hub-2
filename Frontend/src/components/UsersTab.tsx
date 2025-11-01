@@ -27,20 +27,25 @@ const UsersTab: React.FC<Props> = ({ token }) => {
     startIndex + usersPerPage
   );
 
+  const loadUsers = async () => {
+    if (loading) return; // Prevent multiple simultaneous loads
+    try {
+      setLoading(true);
+      const data = await getAllUsers(token);
+      setUsers(data);
+      setError("");
+    } catch (err) {
+      console.error('Error loading users:', err);
+      setError("Kunde inte ladda användare");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Load users when component mounts or token changes
   useEffect(() => {
-    const loadUsers = async () => {
-      try {
-        setLoading(true);
-        const data = await getAllUsers(token);
-        setUsers(data);
-      } catch {
-        setError("Kunde inte ladda användare");
-      } finally {
-        setLoading(false);
-      }
-    };
     loadUsers();
-  }, [token]);
+  }, [token]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (loading) return <p>Laddar användare...</p>;
   if (error) return <p className="error">{error}</p>;

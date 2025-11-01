@@ -14,13 +14,29 @@ interface AdminProps {
 
 const Admin: React.FC<AdminProps> = ({ token }) => {
   const [activeTab, setActiveTab] = useState("bookings");
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const page = localStorage.getItem("activePage");
-    if (page) {
-      setActiveTab(page);
-    }
-    document.body.classList.add("adminBg");
+    const initializeAdmin = async () => {
+      try {
+        const page = localStorage.getItem("activePage");
+        if (page) {
+          setActiveTab(page);
+        }
+        document.body.classList.add("adminBg");
+        
+        // Give SignalR connection time to establish
+        if (connection.state === 'Disconnected') {
+          await connection.start();
+        }
+      } catch (error) {
+        console.error('Error initializing admin:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initializeAdmin();
     return () => {
       document.body.classList.remove("adminBg");
     };
@@ -52,8 +68,17 @@ const Admin: React.FC<AdminProps> = ({ token }) => {
     };
   }, []);
 
-  if (!token) {
-    return <div>Loading...</div>;
+  if (isLoading) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh' 
+      }}>
+        <div>Laddar admin panel...</div>
+      </div>
+    );
   }
 
   return (
@@ -115,10 +140,18 @@ const Admin: React.FC<AdminProps> = ({ token }) => {
       </nav>
 
       <div className="content">
-        {activeTab === "bookings" && <BookingsTab token={token} />}
-        {activeTab === "users" && <UsersTab token={token} />}
-        {activeTab === "resources" && <ResourcesTab token={token} />}
-        {activeTab === "sensors" && <SensorsTab token={token} />}
+        <div style={{ display: activeTab === "bookings" ? "block" : "none" }}>
+          <BookingsTab token={token} />
+        </div>
+        <div style={{ display: activeTab === "users" ? "block" : "none" }}>
+          <UsersTab token={token} />
+        </div>
+        <div style={{ display: activeTab === "resources" ? "block" : "none" }}>
+          <ResourcesTab token={token} />
+        </div>
+        <div style={{ display: activeTab === "sensors" ? "block" : "none" }}>
+          <SensorsTab token={token} />
+        </div>
       </div>
     </div>
   );
