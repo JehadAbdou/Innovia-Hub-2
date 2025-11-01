@@ -1,5 +1,5 @@
 import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr';
-const API_BASE_URL = import.meta.env.VITE_SIGNALR_URL;
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 const token = localStorage.getItem("token") ?? "";
 
 // Booking Hub

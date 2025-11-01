@@ -64,40 +64,106 @@ Krav på verktyg/versioner
 
 Nedan följer en steg-för-steg guide för att köra projektet lokalt.
 
-### 1. Backend
+### 1. Databas Setup
 
-Öppna en terminal i `Backend/` och kör:
+1. Installera MySQL Server och MySQL Workbench från [MySQL Downloads](https://dev.mysql.com/downloads/)
+
+2. När MySQL är installerat, öppna MySQL Command Line Client eller MySQL Workbench och skapa databasen:
+```sql
+CREATE DATABASE innoviaIOT;
+```
+
+3. Kontrollera att MySQL körs på port 3306 och ställ in följande standardinställningar:
+   - Username: `root`
+   - Password: `your_mysql_password` (använd ditt lokala MySQL-lösenord)
+
+### 2. Backend Setup
+
+1. Kopiera `.env.example` till `.env` i projektets rot:
+```bash
+cp .env.example .env
+```
+
+2. Uppdatera `.env` med dina MySQL-inställningar:
+```env
+DB_HOST=localhost
+DB_PORT=3306
+DB_NAME=innoviaIOT
+DB_USER=root
+DB_PASSWORD=your_mysql_password  # Ersätt med ditt lokala MySQL-lösenord
+```
+
+3. Installera .NET SDK 9.0 från [.NET Downloads](https://dotnet.microsoft.com/download)
+
+4. Öppna en terminal i `Backend/` och kör:
 ```powershell
 cd Backend
-dotnet restore
-dotnet build
-dotnet run
+dotnet tool install --global dotnet-ef    # Installera Entity Framework Tools
+dotnet restore                            # Återställ paket
+dotnet ef database update                 # Skapa/uppdatera databasen
+dotnet run                                # Starta backend
 ```
 
-Backend startar på `http://localhost:5022` (API-bas: `http://localhost:5022/api`).
+Backend startar på `http://localhost:8080`
 
 Notera:
-- Projektet seedar data och en admin-användare vid första körningen (se `Services/DbSeeder.cs`).
-- Standard-admin skapas med: användarnamn `admin`, lösenord `Admin@123`, roll `admin`.
-- Du kan inte bli admin när du registrerar dig. För att logga in som admin, använd e-postadressen `admin@example.com` och lösenordordet `Admin@123`
-- SignalR hub körs på `/bookingHub`.
-- Databasanslutning styrs av `ConnectionStrings:DefaultConnection` i `Backend/appsettings.json`.
-  - Du kan byta port/användare/lösen här eller via user secrets/ miljövariabler.
+- Ett admin-konto skapas automatiskt:
+  - Email: `admin@example.com`
+  - Lösenord: `Admin@123`
+- Vanliga användare kan registrera sig via gränssnittet
+- SignalR hub körs på `/bookingHub`
 
-### 2. Starta Frontend
+### 3. Frontend Setup
 
-Frontend använder Vite och läser API-bas via `VITE_API_URL`.
+1. Installera Node.js (version 18 eller 20) från [Node.js Downloads](https://nodejs.org/)
 
-1. Skapa en .env i `Frontend` med:
-```env
-VITE_API_URL=http://localhost:5022/api
+2. Skapa `.env` fil i `Frontend/` mappen:
+```bash
+cd Frontend
+echo "VITE_API_URL=http://localhost:8080/api" > .env
 ```
 
-Öppna en ny terminal i `Frontend/` och kör:
+3. Installera beroenden och starta utvecklingsservern:
 ```powershell
-cd Frontend
 npm install
 npm run dev
+```
+
+Frontend startar på `http://localhost:5173`
+
+### 4. Testa Applikationen
+
+1. Öppna http://localhost:5173 i webbläsaren
+
+2. Logga in som admin:
+   - Email: `admin@example.com`
+   - Lösenord: `Admin@123`
+
+3. Testa funktioner:
+   - Skapa bokningar
+   - Administrera resurser
+   - Se realtidsuppdateringar
+   - Testa sensorkopplingar
+   - Prova AI-funktioner
+
+### 5. Felsökning
+
+Om du stöter på problem:
+
+1. Databasanslutning:
+   - Kontrollera att MySQL körs: `mysql -u root -p`
+   - Verifiera anslutningssträngen i `.env`
+   - Se till att databasen existerar: `SHOW DATABASES;`
+
+2. Backend-problem:
+   - Kontrollera loggarna för felmeddelanden
+   - Verifiera att alla migrationer är körda
+   - Testa API:et direkt via Swagger: http://localhost:8080/swagger
+
+3. Frontend-problem:
+   - Kontrollera webbläsarens konsol för fel
+   - Verifiera att `VITE_API_URL` är korrekt
+   - Rensa npm cache vid behov: `npm cache clean --force`
 ```
 
 Frontend startar på `http://localhost:5173` 

@@ -4,7 +4,8 @@ WORKDIR /frontend
 COPY Frontend/package*.json ./
 RUN npm ci
 COPY Frontend/ .
-ENV VITE_API_URL=http://localhost:8080
+ARG VITE_API_URL
+ENV VITE_API_URL=${VITE_API_URL}
 RUN npm run build
 
 # Backend build stage
@@ -24,8 +25,5 @@ COPY --from=frontend-build /frontend/dist/. ./wwwroot/
 
 EXPOSE 8080
 ENTRYPOINT ["dotnet", "Backend.dll"]
-
-# Expose port 8080
-EXPOSE 8080
 
 ENTRYPOINT ["dotnet", "Backend.dll"]
