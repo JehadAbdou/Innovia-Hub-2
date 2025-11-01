@@ -75,7 +75,7 @@ function App() {
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
-      <ChatBot></ChatBot>
+      {token && <ChatBot />}
     </>
   );
 }
