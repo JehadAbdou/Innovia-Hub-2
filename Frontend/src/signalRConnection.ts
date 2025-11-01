@@ -12,16 +12,24 @@ export const connection = new HubConnectionBuilder()
 
 // TTS Hub
 export const ttsConnection = new HubConnectionBuilder()
-  .withUrl(`${API_BASE_URL}/ttshub`, {
+  .withUrl(`${API_BASE_URL.replace('/api', '')}/ttshub`, {
     accessTokenFactory: () => token,
   })
-  .withAutomaticReconnect()
+  .withAutomaticReconnect({
+    nextRetryDelayInMilliseconds: retryContext => {
+      return Math.min(1000 * Math.pow(2, retryContext.previousRetryCount), 30000);
+    }
+  })
   .build();
 
 // IoT Hub
 export const IOTconnection = new HubConnectionBuilder()
   .withUrl(`http://localhost:5103/hub/telemetry`)
-  .withAutomaticReconnect()
+  .withAutomaticReconnect({
+    nextRetryDelayInMilliseconds: retryContext => {
+      return Math.min(1000 * Math.pow(2, retryContext.previousRetryCount), 30000);
+    }
+  })
   .build();
 
 // Register IoT handlers before starting

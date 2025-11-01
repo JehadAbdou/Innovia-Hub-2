@@ -24,6 +24,12 @@ if (File.Exists(".env"))
     Env.Load();
 }
 
+// Add SignalR services
+builder.Services.AddSignalR(options =>
+{
+    options.EnableDetailedErrors = true;
+});
+
 builder.Services.AddHttpClient("openai", client =>
 {
     client.BaseAddress = new Uri("https://api.openai.com/v1/");
@@ -105,7 +111,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // Enhanced CORS for production
 var allowedOrigins = Environment.GetEnvironmentVariable("ALLOWED_ORIGINS")?.Split(',') 
-    ?? new[] { "http://localhost:5173" };
+    ?? new[] { "http://localhost:5173", "https://coral-app-d5hrz.ondigitalocean.app" };
 
 builder.Services.AddCors(options =>
 {
