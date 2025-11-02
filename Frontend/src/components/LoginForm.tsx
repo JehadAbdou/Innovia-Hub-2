@@ -39,7 +39,7 @@ const LoginForm = () => {
       localStorage.setItem("email", email);
 
       // Navigera baserat på roll
-      navigate(role.toLowerCase() === "admin" ? "/admin" : "/");
+      navigate("/");
     } catch (error: any) {
       setErrorMessage(error.response?.status === 401 ? "Felaktigt användarnamn eller lösenord" : "Något gick fel, försök igen senare");
     }
